@@ -13,7 +13,11 @@
       </div>
     </slot>
     <div class="indicator">
-      <slot name="indicator"></slot>
+      <slot name="indicator" v-if="showIndicator && slideCount>1">
+        <div v-for="(item,index) in slideCount" :key="index"
+        :class="{active:index===currentIndex-1}"
+        class="indi-item"></div>
+      </slot>
     </div>
   </div>
 </template>
@@ -67,7 +71,7 @@ export default {
     // 设置定时器
     startTimer:function(){
       this.playTimer = window.setInterval(() => {
-        console.log('123')
+        // console.log('123')
         this.currentIndex++;
         this.scrollContent(-this.currentIndex * this.totalWidth)
       },this.interval)
@@ -174,6 +178,7 @@ export default {
         // 4.移动完成后重新开启定时器
         this.startTimer();
     },
+    // 控制上一个，下一个
     previous:function(){
       this.changeItem(-1)
     },
@@ -204,5 +209,21 @@ export default {
   .swiper{
     display:flex;
   }
-
+  .indicator{
+    display:flex;
+    justify-content:center;
+    width:100%;
+    position:absolute;
+    bottom:8px;
+  }
+  .indi-item{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background-color:#fff;
+    margin:0 5px;
+  }
+  .indi-item.active{
+    background-color:#f40;
+  }
 </style>
