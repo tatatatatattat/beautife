@@ -170,7 +170,7 @@ export default {
       }else if(this.distance > 0 && currentMove > this.totalWidth * this.moveRadio){
         // 往右边移动超过0.25--
         this.currentIndex--
-      }else if(this < 0 && currentMove > this.totalWidth * this.moveRatio){
+      }else if(this.distance < 0 && currentMove < this.totalWidth * this.moveRatio){
         this.currentIndex++
       }
         // 3.移动到正确的位置

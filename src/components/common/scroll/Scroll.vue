@@ -12,22 +12,44 @@ export default {
     components:{
         BScroll
     },
+    props:{
+        probeType:{
+            type:Number,
+            default:0
+        },
+        pullUpLoad:{
+            type:Boolean,
+            default:false
+        }
+    },
     data(){
         return {
             scroll:null
         }
     },
-    methods:{
-        
-    },
     mounted(){
         this.scroll = new BScroll(this.$refs.wrapper,{
-            click:true
+            click:true,
+            probeType:this.probeType,
+            pullUpLoad:this.pullUpLoad
+        });
+        this.scroll.on('scroll',(position)=>{
+            // console.log(position.y)
+            this.$emit('scroll',position)
+        });
+        this.scroll.on('pullingUp',()=>{
+            this.$emit('pullingUp')
         })
     },
     methods:{
         scrollTo(x,y,time=500){
-            this.scroll.scrollTo(x,y,time)
+            this.scroll&&this.scroll.scrollTo(x,y,time)
+        },
+        refresh(){
+            this.scroll&&this.scroll.refresh()
+        },
+        finishPullUp(){
+            this.scroll&&this.scroll.finishPullUp()
         }
     }
 }
