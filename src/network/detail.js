@@ -7,6 +7,14 @@ export function getDetail(iid){
         }
     })
 }
+
+// 推荐接口
+export function getRecommend(){
+    return request({
+        url:'/recommend'
+    })
+}
+
 // 创建一个class类
 export class Goods {
     constructor(itemInfo,columns,services){

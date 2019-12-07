@@ -32,6 +32,7 @@ export default {
 <style scoped>
 .param-info{
     padding: 0 5px;
+    margin-bottom:20px;
 }
 .param-tab {
 border-collapse:collapse;

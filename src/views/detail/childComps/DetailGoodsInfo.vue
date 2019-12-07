@@ -3,14 +3,16 @@
         <div class="start"></div>
         <div class="desc">{{detailInfo.desc}}</div>
         <div class="end"></div>
-        <div class="myKey">{{detailInfo.detailImage[0].key}}</div>
-        <div class="info-list">
-            <img 
-            @load="imgLoad" 
-            v-for="(item,index) in detailInfo.detailImage[0].list" 
-            :key="index" 
-            :src="detailInfo.detailImage[0].list[index]" 
-            alt="">
+        <div v-for="(item,index) in detailInfo.detailImage" :key="index">
+            <div class="myKey">{{item.key}}</div>
+            <div class="info-list">
+                <img 
+                @load="imgLoad" 
+                v-for="(img,indet) in item.list" 
+                :key="indet" 
+                :src="img" 
+                alt="">
+            </div>
         </div>
     </div>
 </template>
@@ -33,9 +35,16 @@ export default {
     },
     methods:{
         imgLoad(){
-            if(++this.currentIndex == this.detailInfoLength){
-                this.$emit('imageLoad')
-            }
+            // if(++this.currentIndex == this.detailInfoLength){
+            //     this.$emit('imageLoad')
+            // }
+
+            
+            //新方法用的混入防抖函数 
+            this.$emit('imageLoad')
+
+
+            
         }
     },
     watch:{

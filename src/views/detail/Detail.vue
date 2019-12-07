@@ -1,12 +1,14 @@
 <template>
     <div class="detail">
-        <detail-nav-bar class="home-nav"></detail-nav-bar>
-        <scroll class="content" ref="scroll">
+        <detail-nav-bar @titleClick="titleClick" class="home-nav" ref = "nav"/>
+        <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
             <detail-swiper :topImages="topImages"/>
             <detail-base-info :goods="goods"/>
             <detail-shop-info :shop="shop"/>
             <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
-            <detail-param-info :param-info="paramInfo"/>
+            <detail-param-info ref="param" :param-info="paramInfo"/>
+            <detail-comment-info ref="comment" :comment-info="commentInfo"/>
+            <goods-list ref="list" :goods="recommend"/>
         </scroll>
     </div>
 </template>
@@ -19,8 +21,12 @@ import DetailBaseInfo from './childComps/DetailBaseInfo'
 import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
+import DetailCommentInfo from './childComps/DetailCommentInfo'
+import GoodsList from 'components/content/goods/GoodsList'
 
-import {getDetail,Goods,Shop,GoodsParam} from 'network/detail'
+import {debounce} from 'common/utils'
+import {getDetail,getRecommend,Goods,Shop,GoodsParam} from 'network/detail'
+import {itemListenerMixin} from 'common/mixin'
 export default {
     name:'Detail',
     components:{
@@ -30,7 +36,9 @@ export default {
         DetailBaseInfo,
         DetailShopInfo,
         DetailGoodsInfo,
-        DetailParamInfo
+        DetailParamInfo,
+        DetailCommentInfo,
+        GoodsList
     },
     data(){
         return {
@@ -39,9 +47,17 @@ export default {
             goods:{},
             shop:{},
             detailInfo:{},
-            paramInfo:{}
+            paramInfo:{},
+            commentInfo:{},
+            recommend:[],
+            itemListener:null,
+            themeTopY:[],
+            thisFangDou:null,
+            currentIndex:0
         }
     },
+    mixins:[itemListenerMixin],
+    
     created(){
         // 保存传入的iid
         this.iid = this.$route.params.id;
@@ -60,14 +76,86 @@ export default {
             // 保存商品的详情数据
             this.detailInfo = data.detailInfo;
             // 参数信息
-            this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule)
+            this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule);
+
+            // 评论信息
+            this.commentInfo = data.rate;
+
+
+
+            // this.$nextTick(()=>{
+                
+            // })
 
         });
+        getRecommend().then(res=>{
+            this.recommend = res.data.list;
+        });
+
+        this.thisFangDou = debounce(()=>{
+            this.themeTopY=[]
+            this.themeTopY.push(0);
+            this.themeTopY.push(this.$refs.param.$el.offsetTop);
+            this.themeTopY.push(this.$refs.comment.$el.offsetTop);
+            this.themeTopY.push(this.$refs.list.$el.offsetTop);
+ 
+            // 使用  滚动内容显示正确的标题 方法2 还需要push进去一个无穷大
+            // this.themeTopY.push(Number.MAX_VALUE)
+        })
+    },
+    mounted(){
+        // 混入
+
+
+        // const refresh = debounce(this.$refs.scroll.refresh)
+        // 监听图片加载完成 事件总线
+        // this.itemListener = ()=>{
+            // this.$refs.scroll.refresh()
+        //     refresh()
+        // }
+        // this.$bus.$on('itemImgLoad',this.itemListener);
         
+    },
+    updated(){
+        
+    },
+    destroyed(){
+        this.$bus.$off('itemImgLoad',this.itemListener)
     },
     methods:{
         imageLoad(){
-            this.$refs.scroll.refresh()
+            this.refresh();
+            this.thisFangDou()
+        },
+        titleClick(index){
+            this.$refs.scroll.scrollTo(0,-this.themeTopY[index],200)
+        },
+        contentScroll(position){
+            // 滚动内容显示正确的标题
+
+            const positY = -position.y;
+            let length = this.themeTopY.length;
+            for(let i = 0; i < length; i++){
+
+                //方法一
+
+                // if(this.currentIndex!==i&&((i<length-1&&positY>this.themeTopY[i]&&positY<this.themeTopY[i+1])||(i === length-1&&positY>this.themeTopY[i]))){
+                //     this.currentIndex = i;
+                //     this.$refs.nav.currentIndex = this.currentIndex;
+                    
+                // }
+
+                // 方法二
+
+                if(this.currentIndex !== i&&(positY>=this.themeTopY[i])){
+                    this.currentIndex = i;
+                    this.$refs.nav.currentIndex = this.currentIndex;
+                }
+
+            }
+
+            
+
         }
     },
     
@@ -84,7 +172,8 @@ export default {
         position:absolute;
         top:44px;
         bottom:49px;
-        /* z-index:11; */
+        left:0;
+        right:0;
         overflow: hidden;
     }
 </style>

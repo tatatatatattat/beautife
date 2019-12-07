@@ -1,6 +1,6 @@
 <template>
     <div class="goods-item" @click="goodsItemClick">
-        <img :src="goodsItem.show.img" alt="" @load="imgLoad">
+        <img :src="showImage" alt="" @load="imgLoad">
         <p>{{goodsItem.title}}</p>
         <div class="item-list">
             <span class="price">￥{{goodsItem.price}}</span>
@@ -19,12 +19,20 @@ export default {
             }
         }
     },
+    computed:{
+        showImage(){
+            return this.goodsItem.image||this.goodsItem.show.img
+        }
+    },
     methods:{
         imgLoad(){
-            this.$bus.$emit('itemImgLoad')
+            this.$bus.$emit('itemImgLoad');
         },
         goodsItemClick(){
-            this.$router.push('/detail/'+this.goodsItem.iid);
+            if(this.goodsItem.show) this.$router.push('/detail/'+this.goodsItem.iid);
+        
+            // 也可以根据路由判断
+            // if(this.$route.path.indexOf('/home')!=-1)
         }
     }
 }

@@ -39,7 +39,7 @@ import Feature from "./childComps/Feature"
 
 import {getHomeTitle,getHomeGoods} from 'network/home'
 import {debounce} from 'common/utils'
-
+import {itemListenerMixin} from 'common/mixin'
 export default {
     components:{
         NavBar,
@@ -64,9 +64,11 @@ export default {
             isShow:false,
             tabOffsetTop:0,
             isTabShow:false,
-            saveY:0
+            saveY:0,
+            itemListener:null
         }
     },
+    mixins:[itemListenerMixin],
     created(){
         
         // 轮播图数据请求
@@ -77,12 +79,15 @@ export default {
         this.getHomeGoods("sell")
     },
     mounted(){
-        const refresh = debounce(this.$refs.scroll.refresh)
+        // 放入了混入之中了
+
+        //const refresh = debounce(this.$refs.scroll.refresh)
         // 监听图片加载完成 事件总线
-        this.$bus.$on('itemImgLoad',()=>{
+        //this.itemListener = ()=>{
             // this.$refs.scroll.refresh()
-            refresh()
-        });
+           // refresh()
+        //}
+        //this.$bus.$on('itemImgLoad',this.itemListener);
     },
     methods:{
         /**
@@ -161,7 +166,11 @@ export default {
         this.$refs.scroll.refresh()
     },
     deactivated(){
-        this.saveY = this.$refs.scroll.scroll.y
+        // 保存Y值
+        this.saveY = this.$refs.scroll.scroll.y;
+
+        // 2取消全局事件的监听
+        this.$bus.$off('itemImgLoad',this.itemListener)
     },
     computed:{
         showGoods(){
