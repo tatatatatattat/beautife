@@ -31,7 +31,6 @@ import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
 import Scroll from 'components/common/scroll/Scroll'
-import BackTop from 'components/content/backTop/BackTop'
 
 import RecommendView from './childComps/RecommendView'
 import HomeSwiper from "./childComps/HomeSwiper"
@@ -39,7 +38,7 @@ import Feature from "./childComps/Feature"
 
 import {getHomeTitle,getHomeGoods} from 'network/home'
 import {debounce} from 'common/utils'
-import {itemListenerMixin} from 'common/mixin'
+import {itemListenerMixin,backTopMixin} from 'common/mixin'
 export default {
     components:{
         NavBar,
@@ -48,8 +47,7 @@ export default {
         Feature,
         TabControl,
         GoodsList,
-        Scroll,
-        BackTop
+        Scroll
     },
     data(){
         return {
@@ -61,14 +59,13 @@ export default {
                 "sell":{page:0,list:[]},
             },
             currentType:'pop',
-            isShow:false,
             tabOffsetTop:0,
             isTabShow:false,
             saveY:0,
             itemListener:null
         }
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin,backTopMixin],
     created(){
         
         // 轮播图数据请求
@@ -129,9 +126,6 @@ export default {
             }
             this.$refs.tabControl2.currentIndex = index;
             this.$refs.tabControl1.currentIndex = index;
-        },
-        backClick(){
-            this.$refs.scroll.scrollTo(0,0,500)
         },
         contentScroll(position){
             this.isShow = (-position.y) > 1000;

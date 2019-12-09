@@ -1,5 +1,6 @@
 <template>
     <div class="detail">
+        
         <detail-nav-bar @titleClick="titleClick" class="home-nav" ref = "nav"/>
         <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
             <detail-swiper :topImages="topImages"/>
@@ -10,6 +11,8 @@
             <detail-comment-info ref="comment" :comment-info="commentInfo"/>
             <goods-list ref="list" :goods="recommend"/>
         </scroll>
+        <detail-bottom-bar @addCart="addCart"/>
+        <back-top @click.native="backClick" v-show="isShow"/>
     </div>
 </template>
 <script>
@@ -23,10 +26,11 @@ import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
 import GoodsList from 'components/content/goods/GoodsList'
+import DetailBottomBar from './childComps/DetailBottomBar'
 
 import {debounce} from 'common/utils'
 import {getDetail,getRecommend,Goods,Shop,GoodsParam} from 'network/detail'
-import {itemListenerMixin} from 'common/mixin'
+import {itemListenerMixin,backTopMixin} from 'common/mixin'
 export default {
     name:'Detail',
     components:{
@@ -38,7 +42,8 @@ export default {
         DetailGoodsInfo,
         DetailParamInfo,
         DetailCommentInfo,
-        GoodsList
+        GoodsList,
+        DetailBottomBar,
     },
     data(){
         return {
@@ -56,7 +61,7 @@ export default {
             currentIndex:0
         }
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin,backTopMixin],
     
     created(){
         // 保存传入的iid
@@ -153,9 +158,17 @@ export default {
                 }
 
             }
-
-            
-
+            this.isShow = (-position.y) > 1000;
+            (-position.y)+40 > this.tabOffsetTop?this.isTabShow=true:this.isTabShow=false
+        },
+        addCart(){
+            const product = {};
+            product.iid = this.iid;
+            product.image = this.topImages[0];
+            product.title = this.goods.title;
+            product.desc = this.goods.desc;
+            product.price = this.goods.realPrice;
+            this.$store.dispatch('addCat',product)
         }
     },
     
