@@ -13,10 +13,12 @@
         </scroll>
         <detail-bottom-bar @addCart="addCart"/>
         <back-top @click.native="backClick" v-show="isShow"/>
+        <!-- <toast :show="show" :my-toast="massage"/> -->
     </div>
 </template>
 <script>
 import Scroll from 'components/common/scroll/Scroll'
+// import Toast from 'components/common/toast/Toast'
 
 import DetailNavBar from './childComps/DetailNavBar'
 import DetailSwiper from './childComps/DetailSwiper'
@@ -44,6 +46,7 @@ export default {
         DetailCommentInfo,
         GoodsList,
         DetailBottomBar,
+        // Toast
     },
     data(){
         return {
@@ -58,7 +61,9 @@ export default {
             itemListener:null,
             themeTopY:[],
             thisFangDou:null,
-            currentIndex:0
+            currentIndex:0,
+            // massage:"",
+            // show:false,
         }
     },
     mixins:[itemListenerMixin,backTopMixin],
@@ -71,7 +76,6 @@ export default {
         getDetail(this.iid).then(res=>{
             const data = res.result;
             this.topImages = data.itemInfo.topImages;
-            console.log(res)
             // 创建商品信息
             this.goods = new Goods(data.itemInfo,data.columns,data.shopInfo.services);
 
@@ -168,7 +172,17 @@ export default {
             product.title = this.goods.title;
             product.desc = this.goods.desc;
             product.price = this.goods.realPrice;
-            this.$store.dispatch('addCat',product)
+            this.$store.dispatch('addCat',product).then(res=>{
+                // this.massage=res;
+                // this.show=true;
+                // setTimeout(()=>{
+                //     this.massage='';
+                //     this.show=false;
+                // },2000)
+                this.$toast.show()
+                // console.log(this.$toast.show)
+            })
+            
         }
     },
     

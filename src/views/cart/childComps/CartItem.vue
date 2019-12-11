@@ -1,5 +1,8 @@
 <template>
     <div class="cart-item">
+        <div class="select">
+            <check-button @click.native="checkClick" :is-checked="cartList.checked"/>
+        </div>
         <div class='item-img'>
             <img :src="cartList.image" alt="">
         </div>
@@ -14,8 +17,12 @@
     </div>
 </template>
 <script>
+import CheckButton from 'components/content/checkButton/CheckButton'
 export default {
     name:'CartItem',
+    components:{
+        CheckButton
+    },
     props:{
         cartList:{
             type:Object,
@@ -24,8 +31,15 @@ export default {
             }
         }
     },
-    created(){
-        console.log(this.cartList)
+    data(){
+        return {
+            isChecked:true
+        }
+    },
+    methods:{
+        checkClick(){
+            this.cartList.checked = !this.cartList.checked;
+        }
     }
 }
 </script>
@@ -38,8 +52,14 @@ export default {
         font-size:0;
         border-bottom:1px solid #ccc;
     }
+    .select{
+        display:flex;
+        align-items: center;
+        width:20px;
+    }
     .item-img{
-        width:80px;
+        width:70px;
+        margin-left:10px;
         height:100px;
         overflow: hidden;
         border-radius:6px;
@@ -48,7 +68,7 @@ export default {
         width:100%;
     }
     .content{
-        width:calc(100% - 80px - 10px);
+        width:calc(100% - 110px);
         padding-left:10px;
         padding-bottom:40px;
         position:relative;
