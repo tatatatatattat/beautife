@@ -6,7 +6,7 @@
         <div class="content">
             <tab-menu class="content-left" :menudata="menudata" @itemSelect="itemSelect"/>
             <scroll class="content-right" ref="scroll">
-                <tab-content-top :profile-data="profileData"/>
+                <tab-content-top @topImgLoad="topImgLoad" :profile-data="profileData"/>
                 <tab-control 
                 :titles="['综合', '新品', '销量']" 
                 @tabClick="tabClick"/>
@@ -25,6 +25,8 @@ import GoodsList from 'components/content/goods/GoodsList'
 import TabMenu from './childComps/TabMenu'
 import TabContentTop from './childComps/TabContentTop'
 
+import {itemListenerMixin} from 'common/mixin'
+import {debounce} from 'common/utils'
 import {getProfile,getSubcategory,getProfileDetail} from 'network/profile'
 export default {
     name:'Profile',
@@ -50,12 +52,10 @@ export default {
             miniWallkey:null
         }
     },
+    mixins:[itemListenerMixin],
     created(){
         this._profile();
         
-    },
-    updated(){
-        console.log(this.profileGoods)
     },
     methods:{
         _profile(){
@@ -102,6 +102,9 @@ export default {
                 break
             }
             // console.log(this.profileGoods.pop)
+        },
+        topImgLoad(){
+            this.$refs.scroll.refresh()
         }
     },
     computed:{

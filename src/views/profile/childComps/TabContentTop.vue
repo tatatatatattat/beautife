@@ -2,7 +2,7 @@
     <div class="tab-content-tab">
         <grid-view :cols="3" v-if="profileData">
             <div class="item" v-for="(item,index) in profileData" :key = 'index'>
-                <img :src="item.image" alt="">
+                <img :src="item.image" alt="" @load="topImgLoad">
                 <div class="text-item">{{item.title}}</div>
             </div>
         </grid-view>
@@ -15,12 +15,25 @@ export default {
     components:{
         GridView
     },
+    data(){
+        return {
+            loadIndex:0
+        }
+    },
     props:{
         profileData:{
             type:Array,
             default(){
                 return []
             }
+        }
+    },
+    methods:{
+        topImgLoad(){
+            
+          if(++this.loadIndex === this.profileData.length){
+              this.$emit('topImgLoad')
+          }
         }
     }
 }
