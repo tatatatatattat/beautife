@@ -9,7 +9,9 @@ Vue.config.productionTip = false
 
 Vue.prototype.$bus = new Vue();
 // 解决移动端300ms延迟的问题
-FastClick.attach(document.body)
+// FastClick.attach(document.body);
+// 如果使用这个的话在Chrome上会抛出一个警告 ：fastclick
+// Unable to preventDefault inside passive event listener due to target being treated as passive.
 Vue.use(toast);
 
 // 使用懒加载插件

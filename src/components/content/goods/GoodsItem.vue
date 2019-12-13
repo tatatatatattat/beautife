@@ -19,9 +19,12 @@ export default {
             }
         }
     },
+    // created(){
+    //     console.log(this.goodsItem.img)
+    // },
     computed:{
         showImage(){
-            return this.goodsItem.image||this.goodsItem.show.img
+            return this.goodsItem.img || this.goodsItem.image||this.goodsItem.show.img
         }
     },
     methods:{
