@@ -32,7 +32,7 @@ export default {
             this.$bus.$emit('itemImgLoad');
         },
         goodsItemClick(){
-            if(this.goodsItem.show) this.$router.push('/detail/'+this.goodsItem.iid);
+            if(this.goodsItem.show ||this.goodsItem.img) this.$router.push('/detail/'+this.goodsItem.iid);
         
             // 也可以根据路由判断
             // if(this.$route.path.indexOf('/home')!=-1)

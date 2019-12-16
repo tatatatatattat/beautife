@@ -49,7 +49,8 @@ export default {
                 "new":[],
                 "sell":[],
             },
-            miniWallkey:null
+            miniWallkey:null,
+            saveY:0
         }
     },
     mixins:[itemListenerMixin],
@@ -87,7 +88,7 @@ export default {
         itemSelect(index){
             this.createIndex = index;
             this._subcategory(index);
-            this.$refs.scroll.scrollTo(0,0,0)
+            this.$refs.scroll.scrollTo(0,0,0);
         },
         tabClick(index){
             switch(index){
@@ -106,6 +107,14 @@ export default {
         topImgLoad(){
             this.$refs.scroll.refresh()
         }
+    },
+    activated(){
+        this.$refs.scroll.scrollTo(0,this.saveY,500)
+        this.$refs.scroll.refresh()
+    },
+    deactivated(){
+        // 保存Y值
+        this.saveY = this.$refs.scroll.scroll.y;
     },
     computed:{
         showGoods(){
